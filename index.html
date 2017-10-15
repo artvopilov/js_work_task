@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>😊</title>
+</head>
+
+<body>
+<style>
+    html,
+    body {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        background: #efefef;
+    }
+
+    .circle-trigger {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+
+    }
+
+    .circle {
+        background: #444;
+        width: 40px;
+        height: 40px;
+        border-radius: 100px;
+        top: 10px;
+        left: 10px;
+        position: absolute;
+        transition: transform .3s linear, background .7s ease, box-shadow .3s ease;
+    }
+
+    .circle-shadow {
+        background: #ddd;
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-radius: 100px;
+        top: 10px;
+        left: 10px;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
+<script>
+    // Оптимизируйте и приведите код в порядок
+
+    for (var x = 0; x < $("body").width()-60; x += 60) {
+        for (var y = 0; y < $("body").height(); y += 60) {
+            var shadow  = "<div class='circle-shadow'></div>";
+            var circle  = "<div class='circle' data-x='" + x + "' data-y='" + y + "' ></div>";
+            var element = "<div class='circle-trigger' style='top:" + y + "px;left:" + x + "px'>" + shadow + circle + "</div>"
+
+            $("body").append(element);
+        }
+    }
+
+    var currentMousePos = { x: -1, y: -1 };
+
+    $(document).mousemove(function(event) {
+        currentMousePos.x = event.pageX;
+        currentMousePos.y = event.pageY;
+    });
+
+    var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+        color_index = 0;
+
+    $(".circle-trigger").each(function () {
+
+        var circle = $(this).find('.circle'),
+            circle_width = circle.width() / 2,
+            x0 = +circle.data("x") + circle_width,
+            y0 = +circle.data("y") + circle_width;
+
+        $(this).on('mouseenter', function(){
+            var dx = currentMousePos.x - x0,
+                dy = currentMousePos.y - y0;
+
+            var translation = {
+                x: x0/50 - dx - circle_width,
+                y: y0/50 - dy - circle_width,
+                z: 0
+            }
+
+            circle.css({
+                transform: 'translate3d(' + Object.values(translation).join('px,') + ')',
+                backgroundColor: colors[color_index],
+                boxShadow: '0 0 30px 5px ' + colors[color_index]
+            })
+
+            color_index += 1;
+            if (color_index === colors.length) color_index = 0;
+        })
+
+        $(this).on('mouseleave', function(){
+            circle.css({ transform: 'translate3d(0px, 0px, 0px)', backgroundColor: '#444' });
+        });
+    });
+
+</script>
+</body>
+
+</html>
